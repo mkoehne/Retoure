@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "885801632232",
+    "firebase_url": "https://retoure-83dcf.firebaseio.com",
+    "project_id": "retoure-83dcf",
+    "storage_bucket": "retoure-83dcf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885801632232:android:42e3d6163bfd8e01",
+        "android_client_info": {
+          "package_name": "com.streetup.retoure"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "885801632232-bbaqnnd2o4utfa2ckrtectelgkra1jsa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqYASBobjdkOclBzsUFi1XowW_aswolV8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "885801632232-bbaqnnd2o4utfa2ckrtectelgkra1jsa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "885801632232-n9he4n7h29spdua2j62qgjnum390gac0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.streetup.retoure"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
