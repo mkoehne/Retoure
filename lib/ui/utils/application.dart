@@ -30,6 +30,8 @@ class Application {
     "de",
   ];
 
+  static String image;
+
   //returns the list of supported Locales
   Iterable<Locale> supportedLocales() =>
       supportedLanguagesCodes.map<Locale>((language) => Locale(language, ""));

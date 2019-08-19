@@ -1,20 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retoure/model/retoure.dart';
 import 'package:retoure/model/state.dart';
 import 'package:retoure/ui/utils/state_widget.dart';
-import 'package:retoure/ui/utils/store.dart';
 import 'package:retoure/ui/utils/theme_changer.dart';
-import 'package:retoure/ui/widgets/retoure_image.dart';
-import 'package:retoure/ui/widgets/retoure_title.dart';
-
-import '../../state_widget.dart';
 
 class DetailScreen extends StatefulWidget {
-  final Retoure recipe;
-  final bool inFavorites;
+  final Retoure retoure;
 
-  DetailScreen(this.recipe, this.inFavorites);
+  DetailScreen(this.retoure);
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -30,23 +25,11 @@ class _DetailScreenState extends State<DetailScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2);
-    _scrollController = ScrollController();
-    _inFavorites = widget.inFavorites;
   }
 
   @override
   void dispose() {
-    // "Unmount" the controllers:
-    _tabController.dispose();
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _toggleInFavorites() {
-    setState(() {
-      _inFavorites = !_inFavorites;
-    });
   }
 
   @override
@@ -55,18 +38,34 @@ class _DetailScreenState extends State<DetailScreen>
     ThemeChanger _themeChanger = Provider.of<ThemeChanger>(context);
 
     return Scaffold(
-        appBar: AppBar(
-      centerTitle: true,
-      iconTheme:
-          IconThemeData(color: _themeChanger.getAppTheme().theme.mainTextColor),
-      brightness: _themeChanger.getAppTheme().theme.brightness,
-      backgroundColor: _themeChanger.getAppTheme().theme.mainBackgroundColor,
-      title: Text(
-        widget.recipe.name,
-        style: TextStyle(
-            fontSize: 24.0,
+      appBar: AppBar(
+        centerTitle: true,
+        iconTheme: IconThemeData(
             color: _themeChanger.getAppTheme().theme.mainTextColor),
+        brightness: _themeChanger.getAppTheme().theme.brightness,
+        backgroundColor: _themeChanger.getAppTheme().theme.mainBackgroundColor,
+        title: Text(
+          widget.retoure.name,
+          style: TextStyle(
+              fontSize: 24.0,
+              color: _themeChanger.getAppTheme().theme.mainTextColor),
+        ),
       ),
-    ));
+      body: Column(
+        children: <Widget>[
+          Image(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 4,
+              fit: BoxFit.fill,
+              image: CachedNetworkImageProvider("${widget.retoure.imageURL}")),
+          Text(
+            widget.retoure.notes,
+            style: TextStyle(
+                fontSize: 24.0,
+                color: _themeChanger.getAppTheme().theme.mainTextColor),
+          ),
+        ],
+      ),
+    );
   }
 }

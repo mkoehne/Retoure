@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../application.dart';
+import '../ui/utils/application.dart';
 
 class MyTheme {
   Brightness brightness;

@@ -1,39 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Retoure {
-  final String id;
-  final String name;
-  final String image;
-  final DateTime date;
-  final String imageURL;
+  String id;
+  String name;
+  String notes;
+  DateTime date;
+  String imageURL;
+  String userId;
 
 //<editor-fold desc="Data Methods" defaultstate="collapsed">
 
-  const Retoure({
+  Retoure({
     this.id,
     this.name,
-    this.image,
+    this.notes,
     this.date,
     this.imageURL,
+    this.userId,
   });
 
-  @override
+//</e@override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Retoure &&
           runtimeType == other.runtimeType &&
           id == other.id &&
           name == other.name &&
-          image == other.image &&
+          notes == other.notes &&
           date == other.date &&
+          userId == other.userId &&
           imageURL == other.imageURL);
 
   @override
   int get hashCode =>
       id.hashCode ^
       name.hashCode ^
-      image.hashCode ^
+      notes.hashCode ^
       date.hashCode ^
+      userId.hashCode ^
       imageURL.hashCode;
 
   @override
@@ -41,8 +45,9 @@ class Retoure {
     return 'Retoure{' +
         ' id: $id,' +
         ' name: $name,' +
-        ' image: $image,' +
+        ' notes: $notes,' +
         ' date: $date,' +
+        ' userId: $userId,' +
         ' imageURL: $imageURL,' +
         '}';
   }
@@ -52,13 +57,15 @@ class Retoure {
     String name,
     String image,
     DateTime date,
+    String userId,
     String imageURL,
   }) {
     return new Retoure(
       id: id ?? this.id,
       name: name ?? this.name,
-      image: image ?? this.image,
+      notes: image ?? this.notes,
       date: date ?? this.date,
+      userId: userId ?? this.userId,
       imageURL: imageURL ?? this.imageURL,
     );
   }
@@ -67,41 +74,26 @@ class Retoure {
     return {
       'id': this.id,
       'name': this.name,
-      'image': this.image,
-      'date': this.date,
+      'notes': this.notes,
+      'date': Timestamp.fromDate(date),
+      'userId': this.userId,
       'imageURL': this.imageURL,
     };
-  }
-
-  factory Retoure.fromMap(Map<String, dynamic> map) {
-    return new Retoure(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      image: map['image'] as String,
-      date: map['date'] as DateTime,
-      imageURL: map['imageURL'] as String,
-    );
   }
 
   factory Retoure.fromDocument(DocumentSnapshot doc) {
     return Retoure.fromMap(doc.data);
   }
 
-  DateTime _convertStamp(Timestamp _stamp) {
-    if (_stamp != null) {
-      return Timestamp(_stamp.seconds, _stamp.nanoseconds).toDate();
-
-      /*
-    if (Platform.isIOS) {
-      return _stamp.toDate();
-    } else {
-      return Timestamp(_stamp.seconds, _stamp.nanoseconds).toDate();
-    }
-    */
-
-    } else {
-      return null;
-    }
+  factory Retoure.fromMap(Map<String, dynamic> map) {
+    return new Retoure(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      notes: map['notes'] as String,
+      date: Timestamp(map['date'].seconds, map['date'].nanoseconds).toDate(),
+      userId: map['userId'] as String,
+      imageURL: map['imageURL'] as String,
+    );
   }
 
 //</editor-fold>

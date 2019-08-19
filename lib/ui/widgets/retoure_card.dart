@@ -35,7 +35,7 @@ class RetoureCard extends StatelessWidget {
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => new DetailScreen(retoure, inFavorites),
+          builder: (context) => new DetailScreen(retoure),
         ),
       ),
       child: Padding(

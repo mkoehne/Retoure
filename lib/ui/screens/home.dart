@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:retoure/model/retoure.dart';
+import 'package:retoure/ui/screens/add_retoure.dart';
 import 'package:retoure/ui/utils/theme_changer.dart';
 import 'package:retoure/ui/widgets/slide_item.dart';
 
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Stream<QuerySnapshot> getTruckList({int offset, int limit}) {
+  Stream<QuerySnapshot> getRetoureList({int offset, int limit}) {
     Stream<QuerySnapshot> snapshots =
         Firestore.instance.collection('retoures').snapshots();
 
@@ -64,7 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.add,
                 color: Colors.black,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddRetoureScreen()),
+                );
+              },
             ),
           ],
           backgroundColor:
@@ -184,15 +190,14 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  DetailScreen(Retoure.fromDocument(ds), false)),
+              builder: (context) => DetailScreen(Retoure.fromDocument(ds))),
         );
       },
       child: Container(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
           child: SlideItem(
-            img: '${ds['image']}',
+            img: '${ds['imageURL']}',
             title: '${ds['name']}',
           ),
         ),

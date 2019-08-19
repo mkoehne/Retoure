@@ -18,11 +18,19 @@ class SlideItem extends StatefulWidget {
 class _SlideItemState extends State<SlideItem> {
   @override
   Widget build(BuildContext context) {
-    return Text(
-      " ${widget.title} ",
-      style: TextStyle(
-        fontSize: 25,
-      ),
+    return Row(
+      children: <Widget>[
+        Image(
+            width: MediaQuery.of(context).size.width / 8,
+            fit: BoxFit.fill,
+            image: CachedNetworkImageProvider("${widget.img}")),
+        Text(
+          " ${widget.title} ",
+          style: TextStyle(
+            fontSize: 25,
+          ),
+        ),
+      ],
     );
   }
 }
