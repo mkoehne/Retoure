@@ -1,17 +1,12 @@
-import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:retoure/model/retoure.dart';
-import 'package:retoure/ui/utils/application.dart';
 import 'package:retoure/ui/utils/repository.dart';
 import 'package:retoure/ui/utils/theme_changer.dart';
 import 'package:uuid/uuid.dart';
-
-import 'image.dart';
 
 class AddRetoureScreen extends StatefulWidget {
   AddRetoureScreen();
@@ -24,7 +19,9 @@ class _AddRetoureScreenState extends State<AddRetoureScreen>
     with SingleTickerProviderStateMixin {
   String name;
   String notes;
-  DateTime date;
+  DateTime date = DateTime.now();
+  TimeOfDay time =
+      TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
   String imageSource;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   PermissionStatus _status;
@@ -48,6 +45,7 @@ class _AddRetoureScreenState extends State<AddRetoureScreen>
     ThemeChanger _themeChanger = Provider.of<ThemeChanger>(context);
 
     return Scaffold(
+      backgroundColor: _themeChanger.getAppTheme().theme.backgroundColor,
       appBar: AppBar(
         centerTitle: true,
         iconTheme: IconThemeData(
@@ -62,6 +60,7 @@ class _AddRetoureScreenState extends State<AddRetoureScreen>
         ),
       ),
       body: Container(
+          color: _themeChanger.getAppTheme().theme.backgroundColor,
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           child: Builder(
               builder: (context) => Form(
@@ -85,10 +84,29 @@ class _AddRetoureScreenState extends State<AddRetoureScreen>
                                 if (value.isEmpty) {}
                               },
                               onSaved: (val) => setState(() => notes = val)),
+                          _DateTimePicker(
+                            labelText: "Datum",
+                            selectedDate: date,
+                            selectedTime: time,
+                            selectDate: (DateTime date) {
+                              setState(() {
+                                date = date;
+                              });
+                            },
+                            selectTime: (TimeOfDay time) {
+                              setState(() {
+                                time = time;
+                              });
+                            },
+                          ),
                           Container(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 16.0, horizontal: 16.0),
                               child: RaisedButton(
+                                  color: _themeChanger
+                                      .getAppTheme()
+                                      .theme
+                                      .mainBackgroundColor,
                                   onPressed: () {
                                     _displayOptionsDialog();
                                   },
@@ -97,13 +115,25 @@ class _AddRetoureScreenState extends State<AddRetoureScreen>
                               padding: const EdgeInsets.symmetric(
                                   vertical: 16.0, horizontal: 16.0),
                               child: RaisedButton(
+                                  color: _themeChanger
+                                      .getAppTheme()
+                                      .theme
+                                      .mainBackgroundColor,
                                   onPressed: () async {
                                     if (formKey.currentState.validate()) {
                                       formKey.currentState.save();
 
+                                      date = new DateTime(
+                                        date.year,
+                                        date.month,
+                                        date.day,
+                                        time.hour,
+                                        time.minute,
+                                      );
+
                                       var retoure = await Repository.internal()
-                                          .createRetoure(name, notes,
-                                              imageSource, DateTime.now());
+                                          .createRetoure(
+                                              name, notes, imageSource, date);
                                       Navigator.pop(context);
                                     }
                                   },
@@ -216,5 +246,115 @@ class _AddRetoureScreenState extends State<AddRetoureScreen>
     setState(() {
       imageSource = url1;
     });
+  }
+}
+
+class _DateTimePicker extends StatelessWidget {
+  const _DateTimePicker({
+    Key key,
+    this.labelText,
+    this.selectedDate,
+    this.selectedTime,
+    this.selectDate,
+    this.selectTime,
+  }) : super(key: key);
+
+  final String labelText;
+  final DateTime selectedDate;
+  final TimeOfDay selectedTime;
+  final ValueChanged<DateTime> selectDate;
+  final ValueChanged<TimeOfDay> selectTime;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) selectDate(picked);
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+    );
+    if (picked != null && picked != selectedTime) selectTime(picked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle valueStyle = Theme.of(context).textTheme.title;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        Expanded(
+          flex: 4,
+          child: _InputDropdown(
+            labelText: labelText,
+            valueText: DateFormat.yMMMd().format(selectedDate),
+            valueStyle: valueStyle,
+            onPressed: () {
+              _selectDate(context);
+            },
+          ),
+        ),
+        const SizedBox(width: 12.0),
+        Expanded(
+          flex: 3,
+          child: _InputDropdown(
+            valueText: selectedTime.format(context),
+            valueStyle: valueStyle,
+            onPressed: () {
+              _selectTime(context);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _InputDropdown extends StatelessWidget {
+  const _InputDropdown({
+    Key key,
+    this.child,
+    this.labelText,
+    this.valueText,
+    this.valueStyle,
+    this.onPressed,
+  }) : super(key: key);
+
+  final String labelText;
+  final String valueText;
+  final TextStyle valueStyle;
+  final VoidCallback onPressed;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: labelText,
+        ),
+        baseStyle: valueStyle,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(valueText, style: valueStyle),
+            Icon(
+              Icons.arrow_drop_down,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey.shade700
+                  : Colors.white70,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

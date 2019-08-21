@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:retoure/model/retoure.dart';
 import 'package:retoure/model/state.dart';
@@ -21,10 +23,12 @@ class _DetailScreenState extends State<DetailScreen>
   ScrollController _scrollController;
   bool _inFavorites;
   StateModel appState;
+  Retoure retoure;
 
   @override
   void initState() {
     super.initState();
+    retoure = widget.retoure;
   }
 
   @override
@@ -51,21 +55,76 @@ class _DetailScreenState extends State<DetailScreen>
               color: _themeChanger.getAppTheme().theme.mainTextColor),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Image(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 4,
-              fit: BoxFit.fill,
-              image: CachedNetworkImageProvider("${widget.retoure.imageURL}")),
-          Text(
-            widget.retoure.notes,
-            style: TextStyle(
-                fontSize: 24.0,
-                color: _themeChanger.getAppTheme().theme.mainTextColor),
-          ),
-        ],
+      body: Container(
+        color: _themeChanger.getAppTheme().theme.backgroundColor,
+        child: Column(
+          children: <Widget>[
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HeroPhotoViewWrapper(
+                        imageProvider: CachedNetworkImageProvider(
+                            "${widget.retoure.imageURL}"),
+                      ),
+                    ));
+              },
+              child: Container(
+                  child: Hero(
+                tag: "someTag",
+                child: Image(
+                    fit: BoxFit.fill,
+                    image: CachedNetworkImageProvider(
+                        "${widget.retoure.imageURL}")),
+              )),
+            ),
+            Text(
+              widget.retoure.notes,
+              style: TextStyle(
+                  fontSize: 24.0,
+                  color: _themeChanger.getAppTheme().theme.mainTextColor),
+            ),
+            Text(
+              DateFormat('dd.MM.yyyy').format(widget.retoure.date),
+              style: TextStyle(
+                  fontSize: 24.0,
+                  color: _themeChanger.getAppTheme().theme.mainTextColor),
+            ),
+          ],
+        ),
       ),
     );
+  }
+}
+
+class HeroPhotoViewWrapper extends StatelessWidget {
+  const HeroPhotoViewWrapper(
+      {this.imageProvider,
+      this.loadingChild,
+      this.backgroundDecoration,
+      this.minScale,
+      this.maxScale});
+
+  final ImageProvider imageProvider;
+  final Widget loadingChild;
+  final Decoration backgroundDecoration;
+  final dynamic minScale;
+  final dynamic maxScale;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        constraints: BoxConstraints.expand(
+          height: MediaQuery.of(context).size.height,
+        ),
+        child: PhotoView(
+          imageProvider: imageProvider,
+          loadingChild: loadingChild,
+          backgroundDecoration: backgroundDecoration,
+          minScale: minScale,
+          maxScale: maxScale,
+          heroTag: "someTag",
+        ));
   }
 }

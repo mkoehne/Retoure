@@ -13,6 +13,7 @@ class MyTheme {
   Color accentColor;
   Color mainTextColor;
   Color mainBackgroundColor;
+  Color cardBackgroundColor;
   Color highlightColor;
 
   MyTheme(
@@ -25,6 +26,7 @@ class MyTheme {
       this.splashColor,
       this.mainTextColor,
       this.mainBackgroundColor,
+      this.cardBackgroundColor,
       this.highlightColor,
       this.accentColor});
 }
@@ -58,6 +60,7 @@ List<AppTheme> myThemes = [
         scaffoldBackgroundColor: Colors.white,
         primaryColor: HexColor("#60A8A4"),
         mainBackgroundColor: Colors.white,
+        cardBackgroundColor: Colors.white,
         primaryColorBrightness: Brightness.dark,
         accentColor: HexColor("#60A8A4"),
         mainTextColor: Colors.black,
@@ -68,6 +71,7 @@ List<AppTheme> myThemes = [
     'Dark',
     MyTheme(
       brightness: Brightness.dark,
+      backgroundColor: HexColor("212121"),
       accentColor: HexColor("#60A8A4"),
       mainBackgroundColor: HexColor("303030"),
       mainTextColor: Colors.white,
